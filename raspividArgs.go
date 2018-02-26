@@ -48,6 +48,8 @@ type RaspividArgs struct {
 	AWBGains      *AWBGains        // set the AWBGains when AWB is off
 	ROI           *RegionOfIntrest // set the cameras region of interest
 	ColourFx      *ColourEffect    // set the color effects to an image
+	Preview       bool             // Whether to enable or disable preview
+	Custom        string           // Custom, arbitrary flags to raspivid
 
 	Profile ProfileType // set the profile type
 }
@@ -153,6 +155,12 @@ func createCommand(ctx context.Context, args *RaspividArgs) *exec.Cmd {
 	}
 	if args.InsertHeaders {
 		final = append(final, "-ih")
+	}
+	if !args.Preview {
+		final = append(final, "-n")
+	}
+	if args.Custom != "" {
+		final = append(final, args.Custom)
 	}
 	final = append(final, "-o", "-")
 	cmd.Args = append(cmd.Args, final...)
